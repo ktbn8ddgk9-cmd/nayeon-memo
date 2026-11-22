@@ -185,6 +185,13 @@ function tagsOf(m) {
   while ((mm = re.exec(text))) set.add(mm[1]);
   return Array.from(set);
 }
+function chipTags(m) {
+  const text = (m.title || '') + ' ' + (m.body || '');
+  return (m.tags || [])
+    .map(t => String(t).replace(/^#+/, '').trim())
+    .filter(Boolean)
+    .filter(t => text.indexOf('#' + t) === -1);
+}
 function tagsIn(text) {
   const out = [];
   const re = /#([^\s#.,!?()[\]{}'"“”]+)/g;
@@ -612,7 +619,7 @@ function bubbleFor(m) {
     p.append(richText(m.body));
     bubble.append(p);
   }
-  const explicit = (m.tags || []).map(t => String(t).replace(/^#+/, '')).filter(Boolean);
+  const explicit = chipTags(m);
   if (explicit.length) {
     const row = h('div', { class: 'bubble-tags' });
     explicit.forEach(t => row.append(h('span', { class: 'tag-chip' }, '#' + t)));
@@ -1181,7 +1188,7 @@ function renderCalendarView() {
 }
 
 function calItem(m) {
-  const tags = tagsOf(m);
+  const tags = chipTags(m);
   return h('button', { class: 'cal-item', type: 'button', onclick: () => jumpToMemo(m) }, [
     h('div', { class: 'cal-item-top' }, [
       h('span', null, timeLabel(m.createdAt)),

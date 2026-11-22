@@ -1,5 +1,5 @@
 /* 나의 메모 — 오프라인 캐시 (앱 셸) */
-const CACHE = 'na-memo-v1';
+const CACHE = 'na-memo-v2';
 const ASSETS = [
   './',
   './index.html',
