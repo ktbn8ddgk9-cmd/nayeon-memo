@@ -8,7 +8,7 @@
 const ALL = 'all';
 const DEFAULT_FOLDER = 'f_daily';
 const WEEK = ['일', '월', '화', '수', '목', '금', '토'];
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 
 const DEFAULT_FOLDERS = [
   { id: 'f_daily',   name: '일상',       emoji: '☕', order: 1 },
@@ -252,6 +252,94 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2100);
 }
 
+/* ---------------------------- voice input (Web Speech API) ---------------------------- */
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+const VOICE_UNSUPPORTED = '이 화면에서는 음성 인식이 제한돼요. 키보드 오른쪽 아래 마이크 버튼을 이용해 주세요.';
+let recog = null;
+let recogActive = false;
+let recogBase = '';
+let recogFinal = '';
+
+function setVoiceUI(on, msg) {
+  const btn = $('#btn-mic');
+  const bar = $('#voice-bar');
+  if (btn) {
+    btn.classList.toggle('rec', on);
+    btn.setAttribute('aria-pressed', String(on));
+  }
+  if (bar) bar.hidden = !on;
+  const st = $('#voice-status');
+  if (st && msg) st.textContent = msg;
+}
+
+function stopVoice() {
+  if (recog && recogActive) {
+    try { recog.stop(); } catch (err) { /* already stopped */ }
+  }
+}
+
+function toggleVoice() {
+  if (recogActive) { stopVoice(); return; }
+  if (!SpeechRec) { toast(VOICE_UNSUPPORTED); return; }
+
+  try {
+    recog = new SpeechRec();
+  } catch (err) {
+    toast(VOICE_UNSUPPORTED);
+    return;
+  }
+  recog.lang = 'ko-KR';
+  recog.interimResults = true;
+  recog.continuous = false;
+  recog.maxAlternatives = 1;
+
+  const input = $('#compose-text');
+  recogBase = input.value;
+  recogFinal = '';
+
+  recog.onstart = () => {
+    recogActive = true;
+    setVoiceUI(true, '듣고 있어요…');
+  };
+  recog.onresult = ev => {
+    let interim = '';
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      const res = ev.results[i];
+      if (res.isFinal) recogFinal += res[0].transcript;
+      else interim += res[0].transcript;
+    }
+    const glue = recogBase && !/\s$/.test(recogBase) ? ' ' : '';
+    const spoken = (recogFinal + interim).replace(/\s+/g, ' ').replace(/^\s+/, '');
+    input.value = recogBase + glue + spoken;
+    autoGrow();
+    updateSendState();
+    setVoiceUI(true, interim.trim() ? '듣는 중… ' + interim.trim().slice(-20) : '듣고 있어요…');
+  };
+  recog.onerror = ev => {
+    recogActive = false;
+    setVoiceUI(false);
+    const err = ev && ev.error;
+    if (err === 'not-allowed' || err === 'service-not-allowed') toast('마이크 사용이 허용되지 않았어요. 브라우저 설정에서 마이크를 켜 주세요.');
+    else if (err === 'no-speech') toast('잘 안 들렸어요. 다시 한 번 말씀해 주세요');
+    else if (err === 'network') toast('음성 인식을 연결하지 못했어요. 잠시 후 다시 시도해 주세요');
+    else if (err !== 'aborted') toast('음성 인식이 멈췄어요. 다시 시도해 주세요');
+  };
+  recog.onend = () => {
+    recogActive = false;
+    setVoiceUI(false);
+    updateSendState();
+  };
+
+  setVoiceUI(true, '듣고 있어요…');
+  try {
+    recog.start();
+  } catch (err) {
+    recogActive = false;
+    setVoiceUI(false);
+    toast(VOICE_UNSUPPORTED);
+  }
+}
+
 /* =============================================================
    boot
    ============================================================= */
@@ -337,6 +425,7 @@ function bindEvents() {
 
   $('#btn-send').addEventListener('click', submitMemo);
   $('#btn-photo').addEventListener('click', () => $('#photo-input').click());
+  $('#btn-mic').addEventListener('click', toggleVoice);
   $('#photo-input').addEventListener('change', async e => {
     const files = Array.prototype.slice.call(e.target.files || []);
     e.target.value = '';
@@ -684,6 +773,7 @@ function bindLongPress(node, m) {
 function renderComposer() {
   const composer = $('#composer');
   composer.hidden = state.tab !== 'memo';
+  if (composer.hidden) stopVoice();
   const f = folderById(composeFolderId());
   const chip = $('#btn-compose-folder');
   chip.textContent = f.emoji + ' ' + f.name;
@@ -730,6 +820,7 @@ function updateSendState() {
 }
 
 function resetComposer() {
+  stopVoice();
   state.editingId = null;
   state.pendingImages = [];
   $('#compose-text').value = '';
@@ -740,6 +831,7 @@ function resetComposer() {
 }
 
 async function submitMemo() {
+  stopVoice();
   const body = $('#compose-text').value.trim();
   const title = $('#compose-title').value.trim();
   const tags = $('#compose-tags').value.split(/[\s,]+/).map(t => t.replace(/^#+/, '').trim()).filter(Boolean);
