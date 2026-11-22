@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>나의 메모</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#FAF7F0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="나의 메모" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="description" content="나와의 대화처럼 남기는 채팅형 메모장" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app" id="app">
+  <header class="appbar" id="appbar"></header>
+
+  <main class="main" id="main">
+    <section class="view" id="view-memo"></section>
+    <section class="view" id="view-calendar" hidden></section>
+    <section class="view" id="view-settings" hidden></section>
+  </main>
+
+  <div class="composer" id="composer">
+    <div class="editing-bar" id="editing-bar" hidden>
+      <span>✏️ 메모 수정 중</span>
+      <button type="button" id="btn-cancel-edit">취소</button>
+    </div>
+
+    <div class="compose-extra" id="compose-extra" hidden>
+      <input class="field" id="compose-title" type="text" placeholder="제목" maxlength="80" autocomplete="off" enterkeyhint="next" />
+      <input class="field" id="compose-tags" type="text" placeholder="#태그  (띄어쓰기로 구분)" maxlength="140" autocomplete="off" />
+    </div>
+
+    <div class="pending" id="pending-images" hidden></div>
+
+    <div class="compose-tools">
+      <button class="tool-btn" id="btn-photo" type="button" aria-label="사진 첨부">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2.8" y="6.4" width="18.4" height="14.2" rx="3.4" stroke="currentColor" stroke-width="1.8" />
+          <circle cx="12" cy="13.4" r="3.5" stroke="currentColor" stroke-width="1.8" />
+          <path d="M8.6 6.4l1.2-2.2h4.4l1.2 2.2" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button class="chip" id="btn-extra" type="button" aria-pressed="false">✨ 제목·태그 붙여서 쓰기</button>
+      <button class="chip folder-chip" id="btn-compose-folder" type="button">☕ 일상</button>
+    </div>
+
+    <div class="compose-input">
+      <textarea id="compose-text" rows="1" placeholder="메모를 남겨보세요" enterkeyhint="enter"></textarea>
+      <button class="send-btn" id="btn-send" type="button" aria-label="보내기" disabled>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 19V5M12 5l-6 6M12 5l6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab active" type="button" data-tab="memo">
+      <span class="tab-ico">💬</span><span class="tab-label">메모</span>
+    </button>
+    <button class="tab" type="button" data-tab="calendar">
+      <span class="tab-ico">📅</span><span class="tab-label">캘린더</span>
+    </button>
+    <button class="tab" type="button" data-tab="settings">
+      <span class="tab-ico">⚙️</span><span class="tab-label">설정</span>
+    </button>
+  </nav>
+</div>
+
+<div class="lock-screen" id="lock-screen" hidden>
+  <div class="lock-card">
+    <div class="lock-emoji">🔒</div>
+    <h1 class="lock-title">나의 메모</h1>
+    <p class="lock-sub">PIN을 입력해 주세요</p>
+    <input class="lock-input" id="lock-input" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••" />
+    <button class="lock-btn" id="lock-btn" type="button">열기</button>
+    <p class="lock-msg" id="lock-msg"></p>
+  </div>
+</div>
+
+<div class="viewer" id="viewer" hidden>
+  <button class="viewer-close" id="viewer-close" type="button" aria-label="닫기">✕</button>
+  <button class="viewer-nav prev" id="viewer-prev" type="button" aria-label="이전 사진" hidden>‹</button>
+  <img class="viewer-img" id="viewer-img" alt="첨부 사진" />
+  <button class="viewer-nav next" id="viewer-next" type="button" aria-label="다음 사진" hidden>›</button>
+  <div class="viewer-count" id="viewer-count"></div>
+</div>
+
+<div id="sheet-root"></div>
+<div class="toast" id="toast"></div>
+
+<input type="file" id="photo-input" accept="image/*" multiple hidden />
+<input type="file" id="import-input" accept="application/json,.json" hidden />
+
+<script src="app.js"></script>
+</body>
+</html>
