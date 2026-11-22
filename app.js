@@ -331,6 +331,7 @@ function toggleVoice() {
   };
 
   setVoiceUI(true, '듣고 있어요…');
+  recogActive = true;          // 중복 탭으로 start()가 두 번 불리지 않도록 먼저 잠근다
   try {
     recog.start();
   } catch (err) {

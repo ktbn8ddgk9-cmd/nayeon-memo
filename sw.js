@@ -1,11 +1,11 @@
 /* 애플 — 오프라인 캐시 (앱 셸) */
-const CACHE = 'na-memo-v4';
+const CACHE = 'na-memo-v5';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css?v=3',
-  './app.js?v=3',
-  './manifest.json?v=3',
+  './styles.css?v=4',
+  './app.js?v=4',
+  './manifest.json?v=4',
   './icon.svg?v=3',
   './icon-180.png?v=3',
   './icon-192.png?v=3',
