@@ -1,6 +1,6 @@
 'use strict';
 /* =============================================================
-   나의 메모 — 채팅형 메모 (PWA)
+   애플 — 채팅형 메모 (PWA)
    - IndexedDB에 글/사진 영구 저장
    - 폴더, 검색, 캘린더, 백업/복원, (선택) PIN 잠금
    ============================================================= */
@@ -8,7 +8,7 @@
 const ALL = 'all';
 const DEFAULT_FOLDER = 'f_daily';
 const WEEK = ['일', '월', '화', '수', '목', '금', '토'];
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 
 const DEFAULT_FOLDERS = [
   { id: 'f_daily',   name: '일상',       emoji: '☕', order: 1 },
@@ -1296,12 +1296,12 @@ function renderSettingsView() {
       h('span', { class: 'set-ico' }, '📱'),
       h('span', { class: 'set-row-main' }, [
         h('span', { class: 'set-row-title' }, '홈 화면에 추가'),
-        h('span', { class: 'set-row-sub' }, 'Safari 하단 공유 버튼 → 홈 화면에 추가 → ‘나의 메모’')
+        h('span', { class: 'set-row-sub' }, 'Safari 하단 공유 버튼 → 홈 화면에 추가 → ‘애플’')
       ])
     ])
   ]));
 
-  wrap.append(h('div', { class: 'set-foot' }, '나의 메모 v' + APP_VERSION + '\n오프라인에서도 열려요'));
+  wrap.append(h('div', { class: 'set-foot' }, '애플 v' + APP_VERSION + '\n오프라인에서도 열려요'));
   view.append(wrap);
 }
 

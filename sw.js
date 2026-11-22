@@ -1,15 +1,15 @@
-/* 나의 메모 — 오프라인 캐시 (앱 셸) */
-const CACHE = 'na-memo-v3';
+/* 애플 — 오프라인 캐시 (앱 셸) */
+const CACHE = 'na-memo-v4';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css?v=2',
-  './app.js?v=2',
-  './manifest.json',
-  './icon.svg',
-  './icon-180.png',
-  './icon-192.png',
-  './icon-512.png'
+  './styles.css?v=3',
+  './app.js?v=3',
+  './manifest.json?v=3',
+  './icon.svg?v=3',
+  './icon-180.png?v=3',
+  './icon-192.png?v=3',
+  './icon-512.png?v=3'
 ];
 
 self.addEventListener('install', event => {
