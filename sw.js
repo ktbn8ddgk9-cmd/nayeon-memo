@@ -1,10 +1,10 @@
 /* 나의 메모 — 오프라인 캐시 (앱 셸) */
-const CACHE = 'na-memo-v2';
+const CACHE = 'na-memo-v3';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './app.js',
+  './styles.css?v=2',
+  './app.js?v=2',
   './manifest.json',
   './icon.svg',
   './icon-180.png',
